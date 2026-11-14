@@ -1,0 +1,15 @@
+ONDE COLOCAR AS COISAS (tudo na mesma pasta do index.html)
+
+fotos/    -> as fotos do carrossel: foto1.jpg até foto9.jpg (9 fotos, aparecem em grade de 3x3)
+capas/    -> capas dos álbuns das 4 músicas: musica1.jpg ... musica4.jpg
+carta/    -> a foto dela que aparece no card da carta: foto-dela.jpg
+
+Os nomes precisam bater com o content.js. Se mudar o nome de um arquivo, muda também no content.js.
+Sem a foto, o site continua funcionando (aparece um espaço vazio no lugar).
+
+BAÚ COM IMAGEM PRÓPRIA (opcional)
+Coloque na mesma pasta do index.html:
+  bau-fechado.png   -> baú fechado
+  bau-aberto.png    -> baú aberto
+Se os dois existirem, o site usa as imagens no lugar do baú desenhado.
+PNG com fundo transparente funciona melhor. Tamanho sugerido: uns 400x300 px.

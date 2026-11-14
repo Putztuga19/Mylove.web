@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nossa história</title>
+<style>
+  /* ===== Visual: pérola translúcida + brilho cinematográfico ===== */
+  :root {
+    --rosa: #e0557f;
+    --rosa-escuro: #b03a62;
+    --texto: #3d2a4f;
+    --dourado: #f3c85c;
+    --vidro: rgba(255, 255, 255, .55);
+    --vidro-borda: rgba(255, 255, 255, .85);
+    --sombra: 0 14px 34px rgba(120, 60, 100, .18);
+    --serif: Georgia, "Palatino Linotype", "Book Antiqua", serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    height: 100%;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: var(--texto);
+    background: #f7eef4 url("fundo-perola.jpg") center / cover no-repeat;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  [hidden] { display: none !important; }
+  button { font: inherit; cursor: pointer; }
+  #app { position: fixed; inset: 0; }
+
+  /* Capítulos */
+  .cap {
+    position: absolute; inset: 0;
+    display: none; flex-direction: column; align-items: center; justify-content: safe center;
+    padding: 72px 18px 104px; overflow-y: auto;
+    animation: entrar .6s ease both;
+  }
+  .cap.ativo { display: flex; }
+  @keyframes entrar { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(1.7rem, 6vw, 2.6rem); line-height: 1.22;
+    text-align: center; max-width: 620px; margin-bottom: 18px; text-shadow: 0 2px 16px rgba(255,255,255,.8); }
+  h2 { font-family: var(--serif); font-weight: 700; font-style: italic; font-size: clamp(1.4rem, 4.5vw, 1.9rem);
+    color: var(--rosa-escuro); text-align: center; margin-bottom: 18px; }
+  p { line-height: 1.55; text-align: center; max-width: 520px; }
+
+  /* Botões */
+  .botao {
+    margin-top: 16px; padding: 13px 30px; border: none; border-radius: 999px; color: #fff; font-size: 1rem;
+    background: linear-gradient(135deg, #ff7aa6, var(--rosa) 55%, #c93d6c);
+    box-shadow: 0 10px 24px rgba(224,85,127,.35), inset 0 1px 0 rgba(255,255,255,.4);
+    transition: transform .2s, box-shadow .2s, opacity .2s;
+  }
+  .botao:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(224,85,127,.42), inset 0 1px 0 rgba(255,255,255,.4); }
+  .botao:active { transform: scale(.97); }
+  .botao:disabled { opacity: .45; cursor: default; transform: none; box-shadow: none; }
+  .botao.secundario { background: rgba(255,255,255,.65); color: var(--rosa-escuro); border: 1px solid #fff;
+    box-shadow: 0 6px 16px rgba(120,60,100,.12); }
+
+  /* Indicador do topo (baú) */
+  .topo {
+    position: fixed; top: 14px; right: 14px; z-index: 5; width: 48px; height: 48px; border-radius: 50%;
+    display: grid; place-items: center; font-size: 24px; cursor: pointer;
+    background: var(--vidro);
+    border: 1px solid var(--vidro-borda); box-shadow: var(--sombra); transition: transform .2s;
+  }
+  .topo:hover { transform: scale(1.08) rotate(-4deg); }
+  .topo-img { width: 38px; height: 38px; object-fit: contain; }
+
+  .nav { position: fixed; bottom: 18px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 18px; z-index: 6; }
+
+  #toast {
+    position: fixed; top: 72px; left: 50%; transform: translateX(-50%); z-index: 30;
+    padding: 10px 18px; border-radius: 999px; background: rgba(255,255,255,.9);
+    box-shadow: var(--sombra); font-size: .95rem; animation: entrar .4s both;
+  }
+
+  /* 01. Início */
+  #abertura-marca { font-family: var(--serif); letter-spacing: 2px; font-size: .8rem; text-transform: uppercase; color: var(--rosa-escuro); margin-bottom: 14px; }
+
+  /* 02. Momentos: grade 3x3 */
+  .grade-fotos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: min(94vw, 520px); }
+  .card-foto {
+    position: relative; aspect-ratio: 1 / 1; border-radius: 18px; overflow: hidden; cursor: pointer;
+    background: linear-gradient(135deg, #fdeff5, #eef2fb); box-shadow: 0 8px 20px rgba(120,60,100,.15);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform .25s, box-shadow .25s;
+  }
+  .card-foto:hover { transform: translateY(-3px) scale(1.02); }
+  .card-foto span { font-family: var(--serif); font-style: italic; color: var(--rosa-escuro); font-size: .85rem; }
+  .card-foto img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .5s; }
+  .card-foto:hover img { transform: scale(1.06); }
+  .card-foto.selecionada { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--rosa), 0 12px 26px rgba(224,85,127,.35); }
+  .card-foto.escolhida::after {
+    content: "❤️"; position: absolute; top: 6px; right: 6px; z-index: 2; font-size: 18px;
+    animation: pulsar 2s ease-in-out infinite;
+  }
+  @keyframes pulsar { 50% { transform: scale(1.15); } }
+
+  /* Destaque da foto: só o fundo escurece */
+  #destaque {
+    position: fixed; inset: 0; z-index: 25; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 16px; padding: 20px; background: rgba(10, 6, 22, .82);
+    animation: escurecer .35s ease-out;
+  }
+  @keyframes escurecer { from { opacity: 0; } to { opacity: 1; } }
+  .destaque-foto {
+    max-width: min(90vw, 440px); max-height: 62vh; border-radius: 20px; overflow: hidden; border: 6px solid #fff;
+    box-shadow: 0 24px 70px rgba(0,0,0,.55); animation: surgir .5s cubic-bezier(.2,.9,.25,1.2);
+  }
+  @keyframes surgir { from { opacity: 0; transform: scale(.85) translateY(10px); } to { opacity: 1; transform: none; } }
+  .destaque-foto img { display: block; width: 100%; max-height: calc(62vh - 12px); object-fit: contain; }
+  .destaque-legenda { text-align: center; color: #fff; opacity: 0; transform: translateY(10px); transition: opacity .6s, transform .6s; }
+  .destaque-legenda.mostrar { opacity: 1; transform: none; }
+  .legenda-texto { font-family: var(--serif); font-style: italic; font-size: 1.2rem; color: #fff; margin-bottom: 4px; }
+  .legenda-data { font-size: .85rem; letter-spacing: .5px; text-transform: uppercase; opacity: .75; color: #fff; }
+  #destaque .botao { margin-top: 4px; }
+
+  /* Popups (conquistas, estrelas, carta) */
+  #modal {
+    position: fixed; inset: 0; z-index: 20; display: flex; align-items: center; justify-content: center; padding: 20px;
+    background: rgba(10, 6, 22, .6); animation: escurecer .3s ease-out;
+  }
+  #modalCard {
+    background: linear-gradient(160deg, #fffdfb, #fbeef4); border-radius: 24px; padding: 26px 24px;
+    max-width: 420px; width: 100%; max-height: 85vh; overflow-y: auto; text-align: center;
+    box-shadow: 0 30px 80px rgba(0,0,0,.35); animation: surgir .45s cubic-bezier(.2,.9,.25,1.2);
+  }
+  #modalCard p { text-align: left; margin-bottom: 10px; line-height: 1.65; font-family: var(--serif); font-size: 1.02rem; }
+  #modalCard .carta-foto { width: 100%; border-radius: 12px; margin-bottom: 14px; box-shadow: 0 8px 20px rgba(0,0,0,.12); }
+  @keyframes flutuar { 50% { transform: translateY(-6px); } }
+
+  /* Baú (componente em CSS) */
+  .bau-css { position: relative; width: 200px; height: 150px; margin: 10px auto 6px; cursor: pointer; user-select: none; }
+  .bau-css.pequeno { width: 130px; height: 98px; cursor: default; }
+  .bau-css .bau-corpo {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 62%; z-index: 2;
+    border-radius: 10px 10px 16px 16px;
+    background: linear-gradient(180deg, #b87a48, #7a4a2a 60%, #5b3520);
+    box-shadow: inset 0 2px 0 rgba(255,255,255,.25), inset 0 -8px 14px rgba(0,0,0,.3), 0 14px 26px rgba(60,30,15,.35);
+  }
+  .bau-css .bau-corpo::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 14%; right: 14%; border-radius: 3px;
+    background: linear-gradient(90deg, #c9913b, #f7d774, #c9913b);
+  }
+  .bau-css .bau-tampa {
+    position: absolute; left: 0; right: 0; bottom: 56%; height: 46%; z-index: 3;
+    border-radius: 100px 100px 6px 6px / 70px 70px 6px 6px;
+    background: linear-gradient(180deg, #d69a5e, #8a5530);
+    box-shadow: inset 0 3px 0 rgba(255,255,255,.3), 0 -4px 12px rgba(0,0,0,.15);
+    transform-origin: 50% 100%; transition: transform .8s cubic-bezier(.3, 1.3, .5, 1);
+  }
+  .bau-css .bau-tampa::before {
+    content: ""; position: absolute; top: 0; bottom: 0; left: 14%; right: 14%; border-radius: 3px;
+    background: linear-gradient(90deg, #c9913b, #f7d774, #c9913b);
+  }
+  .bau-css .bau-fecho {
+    position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%); z-index: 4;
+    width: 26px; height: 30px; border-radius: 6px; background: linear-gradient(#ffe79a, #d19b3c);
+    box-shadow: 0 2px 6px rgba(0,0,0,.3);
+  }
+  .bau-css .bau-luz {
+    position: absolute; left: 50%; top: 20%; width: 240px; height: 180px; z-index: 1; pointer-events: none;
+    transform: translate(-50%, -50%) scale(.2); opacity: 0;
+    background: radial-gradient(circle, rgba(255,236,160,.95), rgba(255,200,120,.3) 45%, transparent 70%);
+    transition: transform .9s, opacity .9s;
+  }
+  .bau-css.aberto .bau-tampa { transform: perspective(400px) rotateX(-118deg); }
+  .bau-css.aberto .bau-luz { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .bau-css.aberto .bau-fecho { opacity: 0; }
+  .bau-css:not(.pequeno):hover .bau-corpo { filter: brightness(1.08); }
+  .bau-css.tremer { animation: balanca .9s ease-in-out; }
+  @keyframes balanca {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-5deg); }
+    50% { transform: rotate(3deg); }
+    75% { transform: rotate(-3deg); }
+  }
+  #bauProgresso { font-family: var(--serif); color: var(--rosa-escuro); margin-top: 6px; min-height: 1.5em; }
+  #bauConteudo {
+    max-width: 480px; margin-top: 14px; padding: 22px; border-radius: 22px;
+    background: var(--vidro); border: 1px solid var(--vidro-borda);
+    box-shadow: var(--sombra); animation: surgir .7s .3s both;
+  }
+  #fraseFinal { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.5; margin-bottom: 12px; }
+  #listaConq { list-style: none; margin-top: 10px; text-align: left; }
+  #listaConq li { padding: 6px 0; border-bottom: 1px solid rgba(176,58,98,.12); }
+
+  /* Baú com imagem própria: ativa só se bau-fechado.png e bau-aberto.png existirem na pasta */
+  body.bau-img .bau-css { background: url("bau-fechado.png") center bottom / contain no-repeat; }
+  body.bau-img .bau-css.aberto { background-image: url("bau-aberto.png"); }
+  body.bau-img .bau-css > div { display: none; }
+
+  /* Cena de conquista: fundo escurece, aura dourada gira, badge entra no centro, nome aparece embaixo */
+  #modal.conquista { background: rgba(8, 5, 18, .78); }
+  #modal.conquista #modalCard { background: transparent; border: none; box-shadow: none; overflow: visible; max-width: 440px; }
+  .conq-cena { position: relative; display: flex; flex-direction: column; align-items: center; padding: 30px 10px 10px; }
+  .conq-aura {
+    position: absolute; left: 50%; top: 110px; width: 380px; height: 380px; border-radius: 50%;
+    transform: translate(-50%, -50%); pointer-events: none;
+    background: radial-gradient(circle, rgba(255,240,180,.98) 0%, rgba(243,200,92,.65) 22%, rgba(243,170,60,.25) 45%, transparent 70%);
+    animation: auraEntra .7s ease-out both, auraPulsa 2s ease-in-out .7s infinite;
+    will-change: transform, opacity;
+  }
+  @keyframes auraEntra { from { opacity: 0; transform: translate(-50%, -50%) scale(.2); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+  @keyframes auraPulsa { 50% { transform: translate(-50%, -50%) scale(1.12); } }
+  .conq-badge-wrap { position: relative; width: 170px; height: 170px; z-index: 2; }
+  .conq-badge-wrap img { width: 100%; height: 100%; object-fit: contain; animation: badgeEntra 1s cubic-bezier(.2, 1.4, .4, 1) both, badgeFlutua 2.6s ease-in-out 1s infinite; will-change: transform; }
+  @keyframes badgeEntra {
+    0% { transform: scale(0) rotate(-200deg); opacity: 0; }
+    55% { transform: scale(1.18) rotate(10deg); opacity: 1; }
+    75% { transform: scale(.94) rotate(-4deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+  @keyframes badgeFlutua { 50% { transform: translateY(-8px); } }
+  .conq-faisca {
+    position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; z-index: 3; pointer-events: none;
+    animation: faisca 1.1s ease-out .85s both;
+  }
+  @keyframes faisca {
+    0% { transform: translate(0, 0) scale(0); opacity: 1; }
+    40% { opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(1.2); opacity: 0; }
+  }
+  .conq-rotulo { position: relative; z-index: 2; margin-top: 26px; font-size: .78rem; letter-spacing: 3px; text-transform: uppercase; color: #fff3c4; text-shadow: 0 2px 10px rgba(243,200,92,.8); opacity: 0; animation: subir .6s 1s forwards; }
+  .conq-nome { position: relative; z-index: 2; margin-top: 6px; font-family: var(--serif); font-style: italic; font-size: 1.8rem; color: #fff; text-shadow: 0 0 18px rgba(243,200,92,.9), 0 2px 6px rgba(0,0,0,.4); opacity: 0; animation: subir .7s 1.2s forwards; }
+  .conq-cena .botao { position: relative; z-index: 2; opacity: 0; animation: subir .6s 1.7s forwards; }
+  @keyframes subir { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  /* Página do baú: palco com baú, brilho, badges em volta e vitrine */
+  .bau-palco { position: relative; width: min(92vw, 460px); height: min(64vh, 430px); margin-top: 4px; }
+  .bau-palco > #bau {
+    position: absolute; left: 50%; top: 50%; width: min(300px, 62vw); height: calc(min(300px, 62vw) * .75);
+    margin: calc(min(300px, 62vw) * -.375) 0 0 calc(min(300px, 62vw) * -.5); z-index: 2;
+    transform: none; transition: transform .8s cubic-bezier(.3,1.2,.5,1), opacity .4s;
+  }
+  .bau-palco > #bau.aberto { transform: scale(1.22); }
+  .bau-palco > #bau.aberto.tremer { animation: none; }
+  /* Quando o baú abre, a tela inteira escurece, igual aos popups */
+  html.bau-escuro #app::before {
+    content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background: rgba(10, 6, 22, .72); animation: escurecer .6s ease-out both;
+  }
+  .bau-palco > .orbita, .bau-palco > #bau, .bau-palco > .vitrine { z-index: 2; }
+
+  .bau-css.tremer { animation: balanca .9s ease-in-out; }
+  @keyframes balanca {
+    0%, 100% { transform: rotate(0); }
+    25% { transform: rotate(-5deg); }
+    50% { transform: rotate(3deg); }
+    75% { transform: rotate(-3deg); }
+  }
+  #bauProgresso { font-family: var(--serif); color: var(--rosa-escuro); margin-top: 6px; min-height: 1.5em; }
+  #bauConteudo {
+    max-width: 480px; margin-top: 14px; padding: 22px; border-radius: 22px;
+    background: var(--vidro); border: 1px solid var(--vidro-borda);
+    box-shadow: var(--sombra); animation: surgir .7s .3s both;
+  }
+  #fraseFinal { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.5; margin-bottom: 12px; }
+  #listaConq { list-style: none; margin-top: 10px; text-align: left; }
+  #listaConq li { padding: 6px 0; border-bottom: 1px solid rgba(176,58,98,.12); }
+
+  /* Baú com imagem própria: ativa só se bau-fechado.png e bau-aberto.png existirem na pasta */
+  body.bau-img .bau-css { background: url("bau-fechado.png") center bottom / contain no-repeat; }
+  body.bau-img .bau-css.aberto { background-image: url("bau-aberto.png"); }
+  body.bau-img .bau-css > div { display: none; }
+
+  /* Cena de conquista: fundo escurece, aura dourada gira, badge entra no centro, nome aparece embaixo */
+  #modal.conquista { background: rgba(8, 5, 18, .78); }
+  #modal.conquista #modalCard { background: transparent; border: none; box-shadow: none; overflow: visible; max-width: 440px; }
+  .conq-cena { position: relative; display: flex; flex-direction: column; align-items: center; padding: 30px 10px 10px; }
+  .conq-aura {
+    position: absolute; left: 50%; top: 110px; width: 380px; height: 380px; border-radius: 50%;
+    transform: translate(-50%, -50%); pointer-events: none;
+    background: radial-gradient(circle, rgba(255,240,180,.98) 0%, rgba(243,200,92,.65) 22%, rgba(243,170,60,.25) 45%, transparent 70%);
+    animation: auraEntra .7s ease-out both, auraPulsa 2s ease-in-out .7s infinite;
+    will-change: transform, opacity;
+  }
+  @keyframes auraEntra { from { opacity: 0; transform: translate(-50%, -50%) scale(.2); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+  @keyframes auraPulsa { 50% { transform: translate(-50%, -50%) scale(1.12); } }
+  .conq-badge-wrap { position: relative; width: 170px; height: 170px; z-index: 2; }
+  .conq-badge-wrap img { width: 100%; height: 100%; object-fit: contain; animation: badgeEntra 1s cubic-bezier(.2, 1.4, .4, 1) both, badgeFlutua 2.6s ease-in-out 1s infinite; will-change: transform; }
+  @keyframes badgeEntra {
+    0% { transform: scale(0) rotate(-200deg); opacity: 0; }
+    55% { transform: scale(1.18) rotate(10deg); opacity: 1; }
+    75% { transform: scale(.94) rotate(-4deg); }
+    100% { transform: scale(1) rotate(0); }
+  }
+  @keyframes badgeFlutua { 50% { transform: translateY(-8px); } }
+  .conq-faisca {
+    position: absolute; left: 50%; top: 50%; width: 22px; height: 22px; margin: -11px 0 0 -11px; z-index: 3; pointer-events: none;
+    animation: faisca 1.1s ease-out .85s both;
+  }
+  @keyframes faisca {
+    0% { transform: translate(0, 0) scale(0); opacity: 1; }
+    40% { opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(1.2); opacity: 0; }
+  }
+  .conq-rotulo { position: relative; z-index: 2; margin-top: 26px; font-size: .78rem; letter-spacing: 3px; text-transform: uppercase; color: #fff3c4; text-shadow: 0 2px 10px rgba(243,200,92,.8); opacity: 0; animation: subir .6s 1s forwards; }
+  .conq-nome { position: relative; z-index: 2; margin-top: 6px; font-family: var(--serif); font-style: italic; font-size: 1.8rem; color: #fff; text-shadow: 0 0 18px rgba(243,200,92,.9), 0 2px 6px rgba(0,0,0,.4); opacity: 0; animation: subir .7s 1.2s forwards; }
+  .conq-cena .botao { position: relative; z-index: 2; opacity: 0; animation: subir .6s 1.7s forwards; }
+  @keyframes subir { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+
+  /* Página do baú: palco com baú, brilho, badges em volta e vitrine */
+  .bau-palco { position: relative; width: min(92vw, 460px); height: min(64vh, 430px); margin-top: 4px; }
+  .bau-palco > #bau {
+    position: absolute; left: 50%; top: 50%; width: 240px; height: 180px; margin: -90px 0 0 -120px; z-index: 2;
+    transform: none; transition: transform .8s cubic-bezier(.3,1.2,.5,1), opacity .4s;
+  }
+  .bau-palco > #bau.aberto { transform: scale(1.22); }
+  .bau-palco > #bau.aberto.tremer { animation: none; }
+  /* Fundo escurece atrás das badges quando o baú abre */
+  .bau-palco.revelado::before {
+    content: ""; position: absolute; inset: -6% -6%; border-radius: 50%; z-index: 0; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(22,8,32,.62) 0%, rgba(22,8,32,.48) 55%, transparent 75%);
+    animation: escurecer .8s ease-out both;
+  }
+  .bau-brilho {
+    position: absolute; left: 50%; top: 50%; width: 380px; height: 320px; border-radius: 50%; z-index: 1;
+    transform: translate(-50%, -50%) scale(.3); opacity: 0; pointer-events: none;
+    background: radial-gradient(circle, rgba(255,240,170,1) 0%, rgba(255,200,110,.55) 40%, transparent 70%);
+  }
+  .bau-palco.brilhando .bau-brilho { animation: brilhoBau 1.3s ease-in-out forwards; }
+  @keyframes brilhoBau {
+    0% { opacity: 0; transform: translate(-50%, -50%) scale(.3); }
+    60% { opacity: 1; transform: translate(-50%, -50%) scale(1.25); }
+    100% { opacity: .9; transform: translate(-50%, -50%) scale(1); }
+  }
+  .bau-palco.com-vitrine > #bau { opacity: .18; }
+  .orbita { position: absolute; inset: 0; z-index: 3; }
+  .badge-orbita {
+    position: absolute; width: min(112px, 23vw); height: min(112px, 23vw); margin: calc(min(112px, 23vw) * -.5) 0 0 calc(min(112px, 23vw) * -.5); padding: 0; border: none; background: none;
+    cursor: pointer; animation: orbitaEntra .7s cubic-bezier(.2,1.4,.4,1) both;
+  }
+  .badge-orbita img { width: 100%; height: 100%; object-fit: contain; transition: transform .3s; filter: drop-shadow(0 8px 14px rgba(0,0,0,.3)); }
+  .badge-orbita:hover img, .badge-orbita:focus img { transform: scale(1.15); }
+  @keyframes orbitaEntra { from { transform: scale(0) rotate(-120deg); opacity: 0; } to { transform: scale(1) rotate(0); opacity: 1; } }
+  .vitrine {
+    position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 6;
+    width: min(78vw, 320px); max-height: 72%; overflow-y: auto; padding: 16px; text-align: center;
+    background: rgba(255,255,255,.82);
+    border: 1px solid #fff; border-radius: 22px; box-shadow: 0 24px 60px rgba(60,20,50,.3);
+    animation: surgir .4s cubic-bezier(.2,.9,.25,1.2) both;
+  }
+  .vitrine-badge { width: 130px; height: 130px; object-fit: contain; filter: drop-shadow(0 8px 14px rgba(0,0,0,.25)); }
+  .vitrine h2 { margin: 6px 0 10px; font-size: 1.3rem; font-weight: 700; }
+  .vitrine-corpo { text-align: left; }
+  .vitrine-corpo p { text-align: left; margin: 6px 0; font-size: .95rem; }
+  .vitrine-corpo strong { color: var(--rosa-escuro); }
+  .vitrine-foto { width: 100%; border-radius: 14px; margin-bottom: 8px; box-shadow: 0 8px 18px rgba(0,0,0,.15); }
+  .vitrine-corpo iframe { width: 100%; border-radius: 12px; margin-top: 6px; }
+  .frase-final { font-family: var(--serif); font-style: italic; font-size: 1.2rem; line-height: 1.5; max-width: 480px; margin-top: 10px; }
+
+  /* Popup do baú (conquistas) */
+  .bau-ajuda { text-align: center; }
+  .slots { display: flex; justify-content: center; gap: 10px; margin: 8px 0 16px; }
+  .slot {
+    width: 54px; height: 54px; border-radius: 50%; border: 2px dashed #d4aabb; color: #d4aabb;
+    display: grid; place-items: center; font-size: 24px; background: rgba(255,255,255,.5);
+    transition: all .5s;
+  }
+  .slot img { width: 40px; height: 40px; object-fit: contain; filter: grayscale(1) brightness(1.4); opacity: .35; }
+  .slot.feita img { filter: none; opacity: 1; }
+  .slot.feita { overflow: hidden; }
+  .slot.feita {
+    border: 2px solid var(--dourado); color: inherit; background: radial-gradient(#fff6d6, #ffe59a);
+    box-shadow: 0 0 14px rgba(243,200,92,.6);
+  }
+  .barra { height: 14px; border-radius: 99px; background: #efe0ea; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,.08); }
+  .preench { height: 100%; border-radius: 99px; background: linear-gradient(90deg, #ff9ab8, var(--rosa), #f3c85c); transition: width .6s cubic-bezier(.2,.9,.3,1); }
+  .contador-ajuda { margin: 8px 0 14px; font-weight: 600; font-family: var(--serif); }
+
+  /* 03. Músicas */
+  .player-principal {
+    width: min(92vw, 380px); padding: 18px; border-radius: 26px; display: flex; flex-direction: column; align-items: center; gap: 12px;
+    background: linear-gradient(160deg, rgba(255,255,255,.8), rgba(255,255,255,.45)); border: 1px solid #fff; box-shadow: var(--sombra);
+  }
+  .player-info { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; }
+  .capa-grande { width: 180px; height: 180px; border-radius: 18px; object-fit: cover; box-shadow: 0 18px 36px rgba(120,60,100,.3); }
+  .seta {
+    width: 40px; height: 40px; border: none; border-radius: 50%; background: #fff; color: var(--rosa-escuro);
+    font-size: 1.4rem; box-shadow: 0 6px 14px rgba(120,60,100,.18); transition: transform .2s;
+  }
+  .seta:hover { transform: scale(1.1); }
+  #playerTitulo { font-family: var(--serif); font-size: 1.1rem; font-weight: 600; }
+  .player-embed { width: 100%; min-height: 152px; border-radius: 14px; overflow: hidden; }
+  .player-embed iframe { width: 100%; height: 152px; border: 0; border-radius: 14px; display: block; }
+  .player-rodape { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px; }
+  #playerCodigo { width: 120px; border-radius: 8px; }
+  #playerLink { color: var(--rosa-escuro); font-size: .9rem; font-weight: 600; text-decoration: none; }
+  .miniaturas { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; margin: 18px 0 6px; max-width: min(92vw, 380px); }
+  .mini { position: relative; width: 62px; height: 62px; padding: 0; border: none; background: none; transition: transform .25s; }
+  .mini:hover { transform: translateY(-3px); }
+  .mini img { width: 100%; height: 100%; object-fit: cover; border-radius: 14px; border: 2px solid #fff; box-shadow: 0 6px 14px rgba(120,60,100,.2); }
+  .mini.selecionada img { border-color: var(--rosa); box-shadow: 0 0 0 3px rgba(224,85,127,.3), 0 6px 14px rgba(120,60,100,.2); }
+  .mini.escolhida::after { content: "❤️"; position: absolute; top: -8px; right: -8px; font-size: 16px; }
+  #btnEscolherMusica { margin-top: 6px; }
+
+  /* Fase das estrelas: o céu cobre a página inteira */
+  html.modo-universo, html.modo-universo body {
+    background: #0b0820 url("ceu-fundo.jpg") center bottom / cover no-repeat !important;
+  }
+
+  /* 04. Universo: céu estrelado */
+  #ceu {
+    position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
+    background: #0b0820 url("ceu-fundo.jpg") center bottom / cover no-repeat;
+    animation: escurecer 1.2s ease both;
+  }
+  #ceu .estrela-fundo {
+    position: absolute; transform: translate(-50%, -50%); opacity: .75; pointer-events: none;
+  }
+  #ceu .estrela-fundo.brilho { animation: piscar 2.6s ease-in-out infinite; }
+  @keyframes piscar { 50% { opacity: .3; transform: translate(-50%, -50%) scale(.75); } }
+  .universo { position: relative; width: min(88vw, 380px); aspect-ratio: 1 / 1; margin: 8px auto; }
+  .universo svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+  .universo line {
+    stroke: #ffd86b; stroke-width: 1.6; vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 4px #ffd86b); stroke-dasharray: 200; stroke-dashoffset: 200;
+    animation: desenhar .9s ease forwards;
+  }
+  @keyframes desenhar { to { stroke-dashoffset: 0; } }
+  .estrela, .estrela.prop {
+    position: absolute; transform: translate(-50%, -50%); background: none; border: none; padding: 0; line-height: 0;
+    transition: left 1.6s cubic-bezier(.4,0,.2,1), top 1.6s cubic-bezier(.4,0,.2,1), transform .3s;
+  }
+  .estrela img { display: block; pointer-events: none; transition: filter .5s, opacity .5s; }
+  /* Clicáveis: brilho grande; ficam mais fortes quando acesas */
+  button.estrela { cursor: pointer; width: 64px; height: 64px; }
+  button.estrela img { width: 100%; height: 100%; opacity: .7; }
+  button.estrela:hover { transform: translate(-50%, -50%) scale(1.15); }
+  button.estrela:hover img { opacity: 1; }
+  button.estrela.acesa img { opacity: 1; filter: drop-shadow(0 0 8px #ffe38a) drop-shadow(0 0 18px #ffd86b); }
+  /* Decoração: estrelas comuns, menores */
+  .estrela.prop { width: 26px; height: 26px; }
+  .estrela.prop img { width: 100%; height: 100%; opacity: .45; }
+  .estrela.prop.acesa img { opacity: 1; filter: drop-shadow(0 0 6px #fff3c4); }
+
+  /* 05. Carta */
+  .envelope {
+    position: relative; width: min(270px, 80vw); height: 180px; margin: 14px auto 18px; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(160deg, #fffdf9, #f6e7ee); box-shadow: 0 18px 40px rgba(120,60,100,.22);
+    transition: transform .3s;
+  }
+  .envelope:hover { transform: translateY(-4px) rotate(-1deg); }
+  .envelope::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 55%; border-radius: 12px 12px 0 0;
+    background: linear-gradient(#fbd3e0, #f3b5cb); clip-path: polygon(0 0, 100% 0, 50% 100%);
+  }
+  .envelope::after {
+    content: "♥"; position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2;
+    width: 38px; height: 38px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 18px;
+    background: radial-gradient(circle at 35% 30%, #ff9ac0, #b03a62); box-shadow: 0 4px 10px rgba(120,20,60,.35);
+  }
+  .envelope.aberto::after { opacity: .35; }
+  .envelope { width: min(300px, 82vw); height: 200px; box-shadow: 0 0 0 1px #fff, 0 22px 50px rgba(224,85,127,.35); }
+  .envelope::after { animation: seloPulsa 2.4s ease-in-out infinite; }
+  .envelope.aberto::after { animation: none; }
+  @keyframes seloPulsa { 50% { transform: translate(-50%, -50%) scale(1.12); } }
+  .envelope span { font-size: 1.05rem; }
+
+  /* Trilha: barra lateral à esquerda + card do player que muda de cor */
+  .trilha-layout { display: flex; gap: 16px; align-items: stretch; width: min(96vw, 1120px); }
+  .nota-card {
+    flex: 0 0 230px; align-self: stretch; padding: 22px 18px; border-radius: 26px; background: rgba(255,255,255,.6);
+    border: 1px solid #fff; box-shadow: 0 16px 36px rgba(120,60,100,.16); display: flex; flex-direction: column;
+  }
+  .nota-card h3 { font-family: var(--serif); font-weight: 400; font-style: italic; color: var(--rosa-escuro); font-size: 1.15rem; margin-bottom: 12px; }
+  /* Disco de vinil da cor da música, com o espectro do som no centro */
+  .vinil-wrap { flex: 0 0 250px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; }
+  .vinil {
+    position: relative; width: 240px; height: 240px; border-radius: 50%;
+    background: repeating-radial-gradient(circle, #1d1a24 0 2px, #2b2735 2px 3px);
+    box-shadow: 0 18px 40px rgba(40,10,30,.4), inset 0 0 0 2px #0e0c12;
+    animation: girarVinil 4s linear infinite; animation-play-state: paused;
+  }
+  .vinil::before {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background: conic-gradient(from 0deg, transparent 0 20%, rgba(255,255,255,.12) 28%, transparent 36%, transparent 70%, rgba(255,255,255,.08) 78%, transparent 86%);
+  }
+  .vinil-label {
+    position: absolute; left: 50%; top: 50%; width: 118px; height: 118px; margin: -59px 0 0 -59px; border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.35) 0 6%, transparent 20%), var(--cor, #7a1f3d);
+    box-shadow: inset 0 0 0 4px rgba(255,255,255,.12), 0 0 0 3px #0e0c12;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .vinil-label::after { content: ""; position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #0e0c12; }
+  .espectro { display: flex; align-items: center; gap: 3px; height: 56px; z-index: 1; }
+  .espectro span {
+    width: 4px; height: 12%; border-radius: 3px; background: #fff3c4;
+    animation: barraEspectro .8s ease-in-out infinite alternate; animation-play-state: paused;
+  }
+  @keyframes girarVinil { to { transform: rotate(360deg); } }
+  @keyframes barraEspectro { from { height: 12%; } to { height: 100%; } }
+  .vinil-wrap.tocando:not(.pausado) .vinil,
+  .vinil-wrap.tocando:not(.pausado) .espectro span { animation-play-state: running; }
+  @media (max-width: 760px) {
+    .vinil-wrap { flex: none; }
+    .vinil { width: 180px; height: 180px; }
+    .vinil-label { width: 90px; height: 90px; margin: -45px 0 0 -45px; }
+    .espectro { height: 40px; }
+    .player-card { max-width: 100%; width: 100%; padding: 16px; }
+    .player-card .capa-grande { width: 100px; height: 100px; flex-basis: 100px; }
+  }
+  #notaTexto { text-align: left; font-family: var(--serif); font-size: 1rem; line-height: 1.7; color: #4a2c3a; white-space: pre-line; overflow-y: auto; max-height: 60vh; }
+  .lista-musicas { width: 270px; flex: 0 0 270px; max-height: 72vh; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; padding: 4px 6px 4px 2px; }
+  .lista-musicas::-webkit-scrollbar { width: 6px; }
+  .lista-musicas::-webkit-scrollbar-thumb { background: rgba(176,58,98,.35); border-radius: 6px; }
+  .mini {
+    display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px; text-align: left;
+    border-radius: 14px; border: 1px solid #fff; background: rgba(255,255,255,.55); cursor: pointer;
+    transition: transform .2s, background .2s;
+  }
+  .mini:hover { transform: translateX(3px); background: rgba(255,255,255,.85); }
+  .mini img { width: 46px; height: 46px; flex: 0 0 46px; border-radius: 8px; object-fit: cover; border: none; box-shadow: none; }
+  .mini-txt { min-width: 0; }
+  .mini-txt strong { display: block; font-size: .9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini-txt small { display: block; font-size: .78rem; opacity: .75; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .mini.selecionada { background: #fff; box-shadow: 0 0 0 2px var(--rosa), 0 8px 18px rgba(120,60,100,.18); }
+  .mini.escolhida .mini-txt strong::after { content: " ❤️"; }
+  .player-card {
+    flex: 1; min-width: 0; max-width: 500px; padding: 22px; border-radius: 26px; color: #fff;
+    background: linear-gradient(165deg, var(--cor, #7a1f3d) 0%, #120c1c 92%);
+    box-shadow: 0 24px 50px rgba(40, 10, 30, .35); transition: background .8s ease;
+  }
+  .player-topo { display: flex; gap: 16px; align-items: center; margin-bottom: 14px; }
+  .player-card .capa-grande { width: 130px; height: 130px; flex: 0 0 130px; border-radius: 14px; object-fit: cover; box-shadow: 0 14px 30px rgba(0,0,0,.4); }
+  .player-texto { min-width: 0; }
+  .player-titulo { font-family: var(--serif); font-size: 1.3rem; line-height: 1.2; text-align: left; color: #fff; margin: 0; }
+  .player-artista { font-size: .95rem; text-align: left; opacity: .8; color: #fff; margin-top: 4px; }
+  .player-embed { width: 100%; min-height: 152px; border-radius: 14px; overflow: hidden; }
+  .player-embed iframe { width: 100%; height: 152px; border: 0; border-radius: 14px; display: block; }
+  .player-rodape { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 14px 0; flex-wrap: wrap; }
+  .player-controles { display: flex; gap: 8px; }
+  .player-card .seta { background: rgba(255,255,255,.2); color: #fff; box-shadow: none; }
+  #playerLink { color: #fff; font-weight: 600; font-size: .9rem; text-decoration: none; opacity: .9; }
+  #playerCodigo { width: 120px; border-radius: 8px; }
+  .player-card .botao { margin-top: 4px; width: 100%; }
+  @media (max-width: 760px) {
+    .trilha-layout { flex-direction: column; align-items: center; }
+    .nota-card { flex: none; width: 100%; }
+    .lista-musicas { width: 100%; flex: none; max-height: none; flex-direction: row; overflow-x: auto; overflow-y: hidden; padding-bottom: 8px; }
+    .mini { width: auto; min-width: 210px; }
+  }
+
+  /* ===== Ajustes para celular (telas até 600px) ===== */
+  @media (max-width: 600px) {
+    .cap { padding: 62px 12px 96px; }
+    h1 { font-size: 1.55rem; margin-bottom: 12px; }
+    h2 { font-size: 1.3rem; margin-bottom: 12px; }
+    p { font-size: .98rem; }
+    .botao { padding: 11px 22px; font-size: .95rem; margin-top: 12px; }
+    .topo { top: 10px; right: 10px; width: 42px; height: 42px; font-size: 20px; }
+    .topo-img { width: 32px; height: 32px; }
+    .nav { bottom: 12px; padding: 0 12px; }
+    .nav .botao { padding: 9px 16px; font-size: .88rem; margin-top: 0; }
+    #toast { top: 60px; font-size: .88rem; max-width: 90vw; white-space: normal; text-align: center; }
+    .grade-fotos { gap: 8px; }
+    .card-foto span { font-size: .72rem; }
+    .destaque-foto { max-width: 92vw; }
+    .legenda-texto { font-size: 1.05rem; }
+    #modal { padding: 12px; }
+    #modalCard { padding: 20px 16px; border-radius: 20px; }
+    #modal.carta #modalCard { padding: 24px 18px 20px; }
+    #modal.carta #modalCard p { font-size: .98rem; line-height: 1.7; }
+    #modal.conquista #modalCard { max-width: 92vw; }
+    .conq-cena { padding-top: 16px; }
+    .conq-badge-wrap { width: 130px; height: 130px; }
+    .conq-aura { width: 280px; height: 280px; top: 90px; }
+    .conq-nome { font-size: 1.45rem; }
+    .envelope { width: 86vw; height: 170px; }
+    .bau-palco { width: 96vw; height: min(58vh, 380px); }
+    .badge-orbita { width: 74px; height: 74px; }
+    .badge-orbita img { width: 100%; height: 100%; }
+    .bau-palco > #bau { width: min(240px, 56vw); height: calc(min(240px, 56vw) * .75); }
+    .vitrine { width: 86vw; max-height: 70%; padding: 12px; }
+    .vitrine-badge { width: 84px; height: 84px; }
+    .vitrine h2 { font-size: 1.1rem; }
+    .frase-final { font-size: 1.05rem; }
+    .universo { width: 90vw; }
+    .estrela.prop { width: 20px; height: 20px; }
+    button.estrela { width: 52px; height: 52px; }
+    .slot { width: 46px; height: 46px; }
+    .slot img { width: 34px; height: 34px; }
+    .player-titulo { font-size: 1.1rem; }
+    .player-rodape { gap: 8px; }
+    #playerCodigo { width: 96px; }
+    .mini { min-width: 180px; }
+  }
+
+  /* Popup das estrelas: foto em formato de polaroid + frase */
+  .estrela-popup { text-align: center; }
+  .polaroid {
+    width: 78%; margin: 4px auto 16px; padding: 10px 10px 34px; background: #fff; border-radius: 6px;
+    box-shadow: 0 14px 30px rgba(60,20,50,.25); transform: rotate(-2deg);
+  }
+  .polaroid img { display: block; width: 100%; height: auto; border-radius: 3px; }
+  .estrela-popup h2 { margin-bottom: 8px; }
+  .legenda-estrela { text-align: center; font-family: var(--serif); font-style: italic; font-size: 1.05rem; line-height: 1.6; color: #4a2c3a; }
+
+  /* Envelope fechado como imagem: flutua e a legenda fica embaixo */
+  .envelope.envelope-img { width: min(300px, 80vw); height: auto; background: none; box-shadow: none; margin: 10px auto 40px; animation: flutuarEnvelope 3.2s ease-in-out infinite; }
+  .envelope.envelope-img::before, .envelope.envelope-img::after { display: none; }
+  .envelope.envelope-img { display: grid; justify-items: center; align-items: center; }
+  .envelope.envelope-img img { grid-area: 1 / 1; width: 100%; height: auto; filter: drop-shadow(0 18px 26px rgba(120,40,70,.35)); transition: opacity .7s ease, transform .7s ease; }
+  #envAberta { opacity: 0; transform: scale(.96); }
+  .envelope.aberto #envAberta { opacity: 1; transform: none; }
+  .envelope.aberto #envImg { opacity: 0; }
+  .envelope.envelope-img span { bottom: -34px; color: var(--rosa-escuro); }
+  .envelope.envelope-img:hover { animation-play-state: paused; transform: scale(1.04); }
+  @keyframes flutuarEnvelope { 50% { transform: translateY(-10px); } }
+
+  /* Carta aberta: fundo escurece, aura dourada atrás e papel com a declaração */
+  #modal.carta::before {
+    content: ""; position: absolute; left: 50%; top: 50%; width: 520px; height: 520px; border-radius: 50%;
+    transform: translate(-50%, -50%); pointer-events: none;
+    background: radial-gradient(circle, rgba(255,240,180,.95) 0%, rgba(243,200,92,.55) 25%, rgba(243,170,60,.2) 48%, transparent 70%);
+    animation: auraEntra .7s ease-out both, auraPulsa 2.2s ease-in-out .7s infinite;
+  }
+  #modal.carta { background: rgba(10, 6, 22, .8); }
+  #modal.carta #modalCard { z-index: 1; }
+  #modal.carta #modalCard p { font-size: 1.08rem; line-height: 2; text-indent: 1.5em; }
+  #modal.carta #modalCard {
+    background-image: repeating-linear-gradient(180deg, transparent 0 31px, rgba(176,58,98,.13) 31px 32px);
+  }
+  #modal.carta .carta-foto { max-width: 70%; }
+  /* Mural de polaroids: fotos com moldura branca, levemente tortas, com fita adesiva */
+  .grade-fotos { gap: 22px 14px; padding: 14px 6px 6px; width: min(94vw, 500px); }
+  .grade-fotos .card-foto {
+    aspect-ratio: auto; background: #fff; padding: 8px 8px 26px; border-radius: 4px; overflow: visible;
+    box-shadow: 0 12px 24px rgba(90, 40, 70, .2), 0 2px 4px rgba(90,40,70,.12);
+    transform: rotate(var(--r, 0deg));
+    transition: transform .45s cubic-bezier(.2,.9,.3,1.25), box-shadow .45s;
+  }
+  .grade-fotos .card-foto:nth-child(odd) { margin-top: 10px; }
+  .grade-fotos .card-foto:hover { transform: rotate(0) scale(1.08) translateY(-4px); z-index: 2; box-shadow: 0 22px 40px rgba(90,40,70,.28); }
+  .grade-fotos .card-foto img {
+    position: relative; inset: auto; width: 100%; aspect-ratio: 1 / 1; height: auto; object-fit: cover; border-radius: 2px;
+  }
+  .grade-fotos .card-foto:hover img { transform: none; }
+  .grade-fotos .card-foto > span {
+    position: absolute; left: 0; right: 0; bottom: 6px; font-size: .72rem; text-align: center; color: #9a6a7e;
+  }
+  .grade-fotos .card-foto::before {
+    content: ""; position: absolute; top: -9px; left: 50%; width: 52px; height: 18px; z-index: 3;
+    transform: translateX(-50%) rotate(-3deg); background: rgba(255, 206, 224, .8); border-radius: 2px;
+  }
+  .grade-fotos .card-foto.selecionada { box-shadow: 0 0 0 3px #fff, 0 0 0 6px var(--rosa), 0 16px 30px rgba(224,85,127,.35); }
+  .grade-fotos .card-foto.escolhida::after { top: auto; bottom: -10px; right: -8px; font-size: 22px; }
+  @media (max-width: 600px) {
+    .grade-fotos { gap: 18px 10px; }
+    .grade-fotos .card-foto { padding: 6px 6px 20px; }
+  }
+
+  /* Carta de papel */
+  #modal.carta { background: rgba(40, 18, 30, .6); }
+  #modal.carta #modalCard {
+    position: relative; max-width: 440px; padding: 30px 26px 24px; border-radius: 8px 8px 22px 8px;
+    background: linear-gradient(172deg, #fffdf7 0%, #fbf1e3 100%);
+    box-shadow: 0 30px 70px rgba(0,0,0,.4), inset 0 0 0 1px rgba(176,58,98,.12);
+  }
+  #modal.carta #modalCard::before {
+    content: ""; position: absolute; top: -12px; left: 50%; width: 96px; height: 24px;
+    transform: translateX(-50%) rotate(-2deg); background: rgba(255,200,220,.85); border-radius: 2px;
+  }
+  #modal.carta .carta-foto {
+    display: block; width: 72%; height: auto; margin: 6px auto 20px; padding: 8px 8px 26px; background: #fff;
+    border-radius: 4px; box-shadow: 0 10px 22px rgba(0,0,0,.18); transform: rotate(-2.5deg);
+  }
+  #modal.carta #modalCard p {
+    font-family: var(--serif); font-size: 1.05rem; line-height: 1.8; color: #4a2c3a; text-align: left; margin-bottom: 14px;
+    animation: subir .6s both;
+  }
+  #modal.carta #modalCard .botao { margin-top: 8px; }
+  .envelope span {
+    position: absolute; bottom: 14px; width: 100%; text-align: center; z-index: 1;
+    font-family: var(--serif); font-style: italic; color: var(--rosa-escuro);
+  }
+
+  /* Topo, navegação e demais */
+  #btnCartaProx, #btnUniverso, #btnFoto, #btnEscolherMusica { margin-top: 18px; }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+  <div class="topo" id="badge" role="button" tabindex="0" title="Suas conquistas"><img class="topo-img" src="bau-fechado.png" alt="" onerror="this.replaceWith('🧰')"></div>
+  <div id="toast" hidden></div>
+
+  <!-- 01. Início -->
+  <section class="cap ativo" data-cap="inicio">
+    <h1>Mesmo não sendo muito tempo juntos, já criamos diversas memórias boas...</h1>
+    <button class="botao" id="btnIniciar">Começar</button>
+  </section>
+
+  <!-- 02. Momentos -->
+  <section class="cap" data-cap="momentos">
+    <h2>Nossos momentos</h2>
+    <div class="grade-fotos" id="grade"></div>
+    <button class="botao" id="btnFoto" hidden>Próximo capítulo →</button>
+  </section>
+
+  <!-- 03. Trilha -->
+  <section class="cap" data-cap="trilha">
+    <h2>Nossa trilha sonora</h2>
+    <div class="trilha-layout">
+      <aside class="lista-musicas" id="miniaturas" aria-label="Músicas"></aside>
+      <div class="player-card" id="playerCard">
+        <div class="player-topo">
+          <img id="capaGrande" class="capa-grande" alt="">
+          <div class="player-texto">
+            <p id="playerTitulo" class="player-titulo"></p>
+            <p id="playerArtista" class="player-artista"></p>
+          </div>
+        </div>
+        <div id="playerEmbed" class="player-embed"></div>
+        <div class="player-rodape">
+          <div class="player-controles">
+            <button class="seta" id="musAnt" aria-label="Música anterior">‹</button>
+            <button class="seta" id="musProx" aria-label="Próxima música">›</button>
+          </div>
+          <a id="playerLink" target="_blank" rel="noopener">Abrir no Spotify ↗</a>
+          <img id="playerCodigo" alt="Spotify Code">
+        </div>
+        <button class="botao" id="btnEscolherMusica">Essa representa a gente</button>
+      </div>
+      <div class="vinil-wrap" id="vinilWrap" title="Toque no disco pra pausar o giro">
+        <div class="vinil" id="vinil">
+          <div class="vinil-label">
+            <div class="espectro" id="espectro"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04. Universo -->
+  <section class="cap" data-cap="universo">
+    <h2>Meu universo</h2>
+    <div class="universo" id="universo">
+      <svg id="linhas" viewBox="0 0 100 100" preserveAspectRatio="none"></svg>
+    </div>
+    <button class="botao" id="btnUniverso" hidden>Próximo capítulo →</button>
+  </section>
+
+  <!-- 05. Carta -->
+  <section class="cap" data-cap="carta">
+    <h2>Uma carta pra você</h2>
+    <div class="envelope envelope-img" id="envelope" role="button" tabindex="0" aria-label="Abrir carta">
+      <img id="envImg" src="carta-fechada.png" alt="Carta fechada" onerror="this.parentNode.classList.remove('envelope-img'); this.remove();">
+      <img id="envAberta" src="carta-aberta.png" alt="" onerror="this.remove();">
+      <span>Toque para ler</span>
+    </div>
+    <button class="botao" id="btnCartaProx" hidden>Próximo capítulo →</button>
+  </section>
+
+  <!-- 06. Baú -->
+  <section class="cap" data-cap="bau">
+    <h2>Nosso baú</h2>
+    <div class="bau-palco" id="bauPalco">
+      <div class="bau-brilho" id="bauBrilho"></div>
+      <div id="bau" class="bau-css" role="button" tabindex="0" aria-label="Baú">
+        <div class="bau-luz"></div>
+        <div class="bau-corpo"></div>
+        <div class="bau-tampa"></div>
+        <div class="bau-fecho"></div>
+      </div>
+      <div class="orbita" id="orbita" hidden></div>
+      <div class="vitrine" id="vitrine" hidden></div>
+    </div>
+    <p id="bauProgresso"></p>
+    <p id="fraseFinal" class="frase-final" hidden></p>
+  </section>
+
+  <div class="nav">
+    <button class="botao secundario" id="btnAnt">Voltar</button>
+    <button class="botao secundario" id="btnProx">Avançar</button>
+  </div>
+
+  <div id="destaque" hidden>
+    <div class="destaque-foto"><img id="destaqueImg" alt=""></div>
+    <div class="destaque-legenda" id="destaqueLegenda">
+      <p class="legenda-texto" id="destaqueTexto"></p>
+      <p class="legenda-data" id="destaqueData"></p>
+    </div>
+    <button class="botao" id="destaqueBtn">Guardar essa memória ❤️</button>
+  </div>
+
+  <div id="modal" hidden>
+    <div id="modalCard"></div>
+  </div>
+</div>
+
+<div id="ceu" hidden></div>
+
+<script src="content.js"></script>
+<script src="app.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var H = window.NossaHistoria;
+  var C = window.CONTEUDO;
+  var ORDEM = H.CAPITULOS;
+  var NS = 'http://www.w3.org/2000/svg';
+  var BADGE = {
+    memoria: 'badge-memoria.png',
+    trilha: 'badge-trilha.png',
+    conexao: 'badge-conexao.png',
+    coracao: 'badge-coracao.png'
+  };
+
+  // Imagem da badge; se o arquivo não existir, mostra o emoji no lugar
+  function imgBadge(c, classe) {
+    var img = document.createElement('img');
+    img.src = BADGE[c.id];
+    img.alt = c.nome;
+    img.className = classe || '';
+    img.onerror = function () { img.replaceWith(document.createTextNode(c.emoji)); };
+    return img;
+  }
+
+  function $(id) { return document.getElementById(id); }
+  function valido(v) { return typeof v === 'string' && v !== '' && v.indexOf('PREENCHER') !== 0; }
+  function conc(snap, cap) { return snap.capitulos.some(function (c) { return c.id === cap && c.concluido; }); }
+  function proximo(cap) { return ORDEM[ORDEM.indexOf(cap) + 1]; }
+  function el(tag, classe, texto) {
+    var e = document.createElement(tag);
+    if (classe) e.className = classe;
+    if (texto !== undefined) e.textContent = texto;
+    return e;
+  }
+
+  var estado = {
+    atual: 'inicio',
+    fotoSel: null,
+    musicaAtiva: null,
+    cartaIdx: 0,
+    cliquesBau: 0,
+    abrindoBau: false,
+    fila: [],
+    modalAberto: false,
+    primeira: true,
+    conquistasAntes: []
+  };
+
+  // ----- modal (estrela, carta e conquista usam o mesmo) -----
+
+  function abrirModal(conteudo, tipo) {
+    var m = $('modal');
+    var card = $('modalCard');
+    card.innerHTML = '';
+    card.appendChild(conteudo);
+    m.classList.toggle('conquista', tipo === 'conquista');
+    m.classList.toggle('carta', tipo === 'carta');
+    m.hidden = false;
+    estado.modalAberto = true;
+  }
+
+  function fecharModal() {
+    $('modal').hidden = true;
+    estado.modalAberto = false;
+    mostrarProximaConquista();
+  }
+
+  $('modal').addEventListener('click', function (ev) {
+    if (ev.target.id === 'modal') fecharModal();
+  });
+
+  function mostrarToast(texto) {
+    var t = $('toast');
+    t.textContent = texto;
+    t.hidden = false;
+    clearTimeout(mostrarToast.timer);
+    mostrarToast.timer = setTimeout(function () { t.hidden = true; }, 2500);
+  }
+
+  // ----- conquistas: entram numa fila e aparecem uma de cada vez -----
+
+  function enfileirarConquista(c) {
+    estado.fila.push(c);
+    mostrarProximaConquista();
+  }
+
+  function mostrarProximaConquista() {
+    if (estado.modalAberto || estado.fila.length === 0) return;
+    var c = estado.fila.shift();
+    var cena = el('div', 'conq-cena');
+    cena.appendChild(el('div', 'conq-aura'));
+
+    var wrap = el('div', 'conq-badge-wrap');
+    wrap.appendChild(imgBadge(c));
+    // Faíscas que saem do centro da badge, em direções diferentes
+    for (var k = 0; k < 12; k++) {
+      var ang = (k / 12) * Math.PI * 2 + Math.random() * 0.3;
+      var dist = 130 + Math.random() * 60;
+      var f = document.createElement('img');
+      f.src = 'estrela-clicavel.png';
+      f.alt = '';
+      f.className = 'conq-faisca';
+      f.style.setProperty('--dx', (Math.cos(ang) * dist) + 'px');
+      f.style.setProperty('--dy', (Math.sin(ang) * dist) + 'px');
+      f.onerror = function () { this.remove(); };
+      wrap.appendChild(f);
+    }
+    cena.appendChild(wrap);
+
+    cena.appendChild(el('p', 'conq-rotulo', 'Conquista desbloqueada'));
+    cena.appendChild(el('h2', 'conq-nome', c.nome));
+    var b = el('button', 'botao', 'Continuar');
+    b.addEventListener('click', fecharModal);
+    cena.appendChild(b);
+    abrirModal(cena, 'conquista');
+  }
+
+  // ----- explicação das conquistas (popup) -----
+
+  function criarBau(pequeno) {
+    var b = el('div', 'bau-css' + (pequeno ? ' pequeno' : ''));
+    b.appendChild(el('div', 'bau-luz'));
+    b.appendChild(el('div', 'bau-corpo'));
+    b.appendChild(el('div', 'bau-tampa'));
+    b.appendChild(el('div', 'bau-fecho'));
+    return b;
+  }
+
+  function abrirAjuda(vemDoComecar) {
+    var snap = H.snapshot();
+    var total = snap.progresso.total;
+    var feitas = snap.progresso.conquistadas;
+
+    var box = el('div', 'bau-ajuda');
+    box.appendChild(el('h2', null, 'Suas conquistas'));
+    box.appendChild(criarBau(true));
+
+    var slots = el('div', 'slots');
+    snap.conquistas.forEach(function (c) {
+      var slot = el('div', 'slot' + (c.desbloqueada ? ' feita' : ''));
+      slot.appendChild(imgBadge(c));
+      slots.appendChild(slot);
+    });
+    box.appendChild(slots);
+
+    var barra = el('div', 'barra');
+    var preench = el('div', 'preench');
+    preench.style.width = (feitas / total * 100) + '%';
+    barra.appendChild(preench);
+    box.appendChild(barra);
+    box.appendChild(el('p', 'contador-ajuda', feitas + '/' + total));
+
+    var b = el('button', 'botao', vemDoComecar ? 'Começar a história' : 'Fechar');
+    b.addEventListener('click', function () {
+      fecharModal();
+      if (vemDoComecar) irPara('momentos');
+    });
+    box.appendChild(b);
+    abrirModal(box);
+  }
+
+  // ----- momentos: grade de fotos -----
+
+  function montarFotos() {
+    var track = $('grade');
+    C.fotos.forEach(function (f, i) {
+      var card = el('div', 'card-foto');
+      card.setAttribute('data-i', i);
+      // Rotação fixa por foto: parece polaroids espalhadas sobre a mesa
+      var giros = [-4, 3, -2, 5, -3, 2, -5, 4, -1];
+      card.style.setProperty('--r', giros[i % giros.length] + 'deg');
+      card.appendChild(el('span', null, 'Foto ' + (i + 1)));
+      var img = document.createElement('img');
+      img.src = f.src;
+      img.alt = f.legenda;
+      img.onerror = function () { img.remove(); };
+      card.appendChild(img);
+      card.addEventListener('click', function () { abrirDestaque(i); });
+      track.appendChild(card);
+    });
+  }
+
+  var destaqueIdx = null;
+  var destaqueTimer = null;
+
+  function abrirDestaque(i) {
+    destaqueIdx = i;
+    estado.fotoSel = i;
+    var f = C.fotos[i];
+    var img = $('destaqueImg');
+    img.style.display = '';
+    img.src = f.src;
+    img.onerror = function () { img.style.display = 'none'; };
+    $('destaqueTexto').textContent = valido(f.legenda) ? f.legenda : '';
+    $('destaqueData').textContent = valido(f.data) ? f.data : '';
+    $('destaqueLegenda').classList.remove('mostrar');
+    clearTimeout(destaqueTimer);
+    destaqueTimer = setTimeout(function () { $('destaqueLegenda').classList.add('mostrar'); }, 600);
+    atualizarDestaqueBtn();
+    $('destaque').hidden = false;
+    atualizarMomentos(H.snapshot());
+  }
+
+  function fecharDestaque() {
+    clearTimeout(destaqueTimer);
+    $('destaque').hidden = true;
+    destaqueIdx = null;
+  }
+
+  function atualizarDestaqueBtn() {
+    var fav = H.snapshot().fotoFavorita;
+    $('destaqueBtn').textContent = (fav === destaqueIdx) ? 'Essa é a favorita ❤️' : 'Guardar essa memória ❤️';
+  }
+
+  $('destaque').addEventListener('click', function (ev) {
+    if (ev.target.id === 'destaque') fecharDestaque();
+  });
+  $('destaqueBtn').addEventListener('click', function () {
+    if (destaqueIdx === null) return;
+    H.escolherFoto(destaqueIdx);
+    fecharDestaque();
+  });
+
+  function atualizarMomentos(snap) {
+    var fav = snap.fotoFavorita;
+    document.querySelectorAll('.card-foto').forEach(function (card) {
+      var i = Number(card.getAttribute('data-i'));
+      card.classList.toggle('selecionada', i === estado.fotoSel);
+      card.classList.toggle('escolhida', i === fav);
+    });
+    // O botão da página só aparece depois de confirmar a foto favorita
+    var b = $('btnFoto');
+    b.hidden = !conc(snap, 'momentos');
+    b.disabled = false;
+  }
+
+  // ----- trilha: player principal e miniaturas -----
+
+  function montarEspectro() {
+    var box = $('espectro');
+    for (var k = 0; k < 9; k++) {
+      var barra = document.createElement('span');
+      barra.style.animationDelay = (k * 0.11) + 's';
+      barra.style.animationDuration = (0.6 + (k % 4) * 0.18) + 's';
+      box.appendChild(barra);
+    }
+    // Toque no disco pausa e continua o giro
+    $('vinil').addEventListener('click', function () {
+      if (spotifyCtrl) { spotifyCtrl.togglePlay(); return; }
+      $('vinilWrap').classList.toggle('pausado');
+    });
+  }
+
+  function montarMusicas() {
+    var box = $('miniaturas');
+    C.musicas.forEach(function (m, i) {
+      var b = el('button', 'mini');
+      b.setAttribute('data-i', i);
+      b.setAttribute('aria-label', m.titulo + ' - ' + m.artista);
+      var img = document.createElement('img');
+      img.src = m.capa;
+      img.alt = '';
+      img.onerror = function () { img.style.background = '#fbeff5'; img.removeAttribute('src'); };
+      b.appendChild(img);
+      var txt = el('div', 'mini-txt');
+      txt.appendChild(el('strong', null, m.titulo));
+      txt.appendChild(el('small', null, m.artista));
+      b.appendChild(txt);
+      b.addEventListener('click', function () { tocar(i, true); });
+      box.appendChild(b);
+    });
+  }
+
+  // Código de barras do Spotify (só as barras, sem capa). Tenta duas combinações de cores.
+  function mostrarCodigoSpotify(id) {
+    var cod = $('playerCodigo');
+    var uri = encodeURIComponent('spotify:track:' + id);
+    var formatos = [
+      'https://scannables.scdn.co/uri/plain/png/FFFFFF/000000/640/' + uri,
+      'https://scannables.scdn.co/uri/plain/png/000000/FFFFFF/640/' + uri
+    ];
+    var tentativa = 0;
+    cod.onerror = function () {
+      tentativa++;
+      if (tentativa < formatos.length) {
+        cod.src = formatos[tentativa];
+      } else {
+        cod.hidden = true;
+      }
+    };
+    cod.onload = function () { cod.hidden = false; };
+    cod.hidden = false;
+    cod.src = formatos[0];
+  }
+
+  // ----- Player do Spotify: API oficial (sabe se está tocando) com reserva em iframe -----
+  var spotifyCtrl = null;
+  var spotifyPendente = null;
+  var spotifyApiTentada = false;
+  var reservaAtiva = false;
+
+  function carregarMusica(id, tocarAgora) {
+    var uri = 'spotify:track:' + id;
+    if (spotifyCtrl) {
+      spotifyCtrl.loadUri(uri);
+      if (tocarAgora) spotifyCtrl.play();
+      return;
+    }
+    if (reservaAtiva) { usarIframe(id, tocarAgora); return; }
+    spotifyPendente = { uri: uri, tocar: tocarAgora, id: id };
+    if (!spotifyApiTentada) {
+      spotifyApiTentada = true;
+      var sc = document.createElement('script');
+      sc.src = 'https://open.spotify.com/embed/iframe-api/v1';
+      sc.async = true;
+      sc.onerror = function () { if (spotifyPendente) usarIframe(spotifyPendente.id, spotifyPendente.tocar); };
+      document.body.appendChild(sc);
+      // Se a API não responder, usa o iframe normal
+      setTimeout(function () {
+        if (!spotifyCtrl && spotifyPendente) usarIframe(spotifyPendente.id, spotifyPendente.tocar);
+      }, 5000);
+    }
+  }
+
+  function usarIframe(id, tocarAgora) {
+    reservaAtiva = true;
+    spotifyPendente = null;
+    var box = $('playerEmbed');
+    box.innerHTML = '';
+    var fr = document.createElement('iframe');
+    fr.title = 'Player do Spotify';
+    fr.setAttribute('allow', 'autoplay; encrypted-media');
+    fr.src = 'https://open.spotify.com/embed/track/' + id + (tocarAgora ? '?utm_source=generator&autoplay=1' : '');
+    box.appendChild(fr);
+    // Sem a API não dá pra saber se está tocando, então o disco gira enquanto a música estiver escolhida
+    $('vinilWrap').classList.toggle('tocando', !!tocarAgora);
+  }
+
+  window.onSpotifyIframeApiReady = function (IFrameAPI) {
+    var p = spotifyPendente || { uri: 'spotify:track:' + C.musicas[0].spotifyId, tocar: false };
+    spotifyPendente = null;
+    IFrameAPI.createController($('playerEmbed'), { uri: p.uri, width: '100%', height: 152 }, function (ctrl) {
+      spotifyCtrl = ctrl;
+      ctrl.addListener('playback_update', function (e) {
+        $('vinilWrap').classList.toggle('tocando', !e.data.isPaused);
+        $('vinilWrap').classList.remove('pausado');
+      });
+      if (p.tocar) ctrl.play();
+    });
+  };
+
+  function tocar(i, comAutoplay) {
+    estado.musicaAtiva = i;
+    var m = C.musicas[i];
+    $('playerTitulo').textContent = m.titulo;
+    $('playerArtista').textContent = m.artista;
+    // Cor do card: a da música (cor) ou uma da paleta, pra cada música ter a sua
+    var paleta = ['#7a1f3d', '#2a1a5e', '#0f4c5c', '#5c3b1e', '#3d1f5c', '#1f4d3a', '#6b2b2b', '#1e3a5f'];
+    var cor = m.cor || paleta[i % paleta.length];
+    $('playerCard').style.setProperty('--cor', cor);
+    $('vinilWrap').style.setProperty('--cor', cor);
+    // O disco só gira quando a música começa a tocar (clique), não ao abrir a página
+    $('vinilWrap').classList.toggle('tocando', !!comAutoplay && valido(m.spotifyId));
+
+    var capa = $('capaGrande');
+    capa.style.display = '';
+    capa.src = m.capa;
+    capa.onerror = function () { capa.style.display = 'none'; };
+
+    if (valido(m.spotifyId)) {
+      // Clique numa música já toca; ao abrir a página só carrega, sem tocar sozinha
+      carregarMusica(m.spotifyId, comAutoplay);
+      mostrarCodigoSpotify(m.spotifyId);
+      $('playerLink').href = 'https://open.spotify.com/track/' + m.spotifyId;
+      $('playerLink').hidden = false;
+    } else {
+      $('playerEmbed').innerHTML = '';
+      $('playerCodigo').hidden = true;
+      $('playerLink').hidden = true;
+      mostrarToast('Falta o spotifyId dessa música no content.js');
+    }
+    atualizarTrilha(H.snapshot());
+  }
+
+  function trocarMusica(d) {
+    var n = C.musicas.length;
+    var atualIdx = estado.musicaAtiva === null ? 0 : estado.musicaAtiva;
+    tocar((atualIdx + d + n) % n, true);
+  }
+
+  function atualizarTrilha(snap) {
+    var ativa = estado.musicaAtiva;
+    var fav = snap.musicaFavorita;
+    document.querySelectorAll('.mini').forEach(function (b) {
+      var i = Number(b.getAttribute('data-i'));
+      b.classList.toggle('selecionada', i === ativa);
+      b.classList.toggle('escolhida', i === fav);
+    });
+    var bt = $('btnEscolherMusica');
+    bt.textContent = conc(snap, 'trilha') ? 'Próximo capítulo →' : 'Essa representa a gente';
+  }
+
+  // ----- universo -----
+
+  function montarCeu() {
+    var ceu = $('ceu');
+    for (var i = 0; i < 45; i++) {
+      var img = document.createElement('img');
+      img.src = 'estrela-comum.png';
+      img.alt = '';
+      img.className = 'estrela-fundo' + (i < 8 ? ' brilho' : '');
+      var tam = 8 + Math.random() * 14;
+      img.style.width = tam + 'px';
+      img.style.height = tam + 'px';
+      img.style.left = (Math.random() * 100) + '%';
+      img.style.top = (Math.random() * 100) + '%';
+      img.style.animationDelay = (Math.random() * 2.6) + 's';
+      img.onerror = function () { this.remove(); };
+      ceu.appendChild(img);
+    }
+  }
+
+  function montarEstrelas() {
+    var box = $('universo');
+    C.estrelas.forEach(function (e) {
+      // Começa espalhada no céu; o coração é formado depois
+      var interativa = e.interativa !== false;
+      var b = el(interativa ? 'button' : 'span', interativa ? 'estrela' : 'estrela prop');
+      b.setAttribute('data-id', e.id);
+      b.style.left = e.inicio.x + '%';
+      b.style.top = e.inicio.y + '%';
+
+      var img = document.createElement('img');
+      img.src = interativa ? 'estrela-clicavel.png' : 'estrela-comum.png';
+      img.alt = '';
+      img.onerror = function () { img.remove(); b.textContent = '★'; };
+      b.appendChild(img);
+
+      if (interativa) {
+        b.setAttribute('aria-label', e.tipo);
+        b.addEventListener('click', function () {
+          var ok = H.revelarEstrela(e.id);
+          if (ok) abrirEstrela(e);
+        });
+      }
+      box.appendChild(b);
+    });
+  }
+
+  function abrirEstrela(e) {
+    var box = el('div', 'estrela-popup');
+    if (e.foto) {
+      var pol = el('div', 'polaroid');
+      var img = document.createElement('img');
+      img.src = e.foto;
+      img.alt = '';
+      img.onerror = function () { pol.remove(); };
+      pol.appendChild(img);
+      box.appendChild(pol);
+    }
+    box.appendChild(el('h2', null, e.tipo));
+    box.appendChild(el('p', 'legenda-estrela', e.texto));
+    var b = el('button', 'botao', 'Fechar');
+    b.addEventListener('click', fecharModal);
+    box.appendChild(b);
+    abrirModal(box);
+  }
+
+  function desenharLinhas() {
+    var svg = $('linhas');
+    svg.innerHTML = '';
+    var n = C.estrelas.length;
+    for (var i = 0; i < n; i++) {
+      var a = C.estrelas[i];
+      var b = C.estrelas[(i + 1) % n];
+      var l = document.createElementNS(NS, 'line');
+      l.setAttribute('x1', a.x); l.setAttribute('y1', a.y);
+      l.setAttribute('x2', b.x); l.setAttribute('y2', b.y);
+      svg.appendChild(l);
+    }
+  }
+
+  function atualizarUniverso(snap) {
+    var revel = snap.estrelasReveladas;
+    var universoOk = conc(snap, 'universo');
+    var u = $('universo');
+
+    document.querySelectorAll('#universo [data-id]').forEach(function (b) {
+      var id = b.getAttribute('data-id');
+      var e = C.estrelas.filter(function (x) { return x.id === id; })[0];
+      var interativa = b.tagName === 'BUTTON';
+      b.classList.toggle('acesa', interativa ? revel.indexOf(id) !== -1 : universoOk);
+      // Quando o universo é concluído, as estrelas saem do céu e formam o coração
+      var pos = universoOk ? e : e.inicio;
+      b.style.left = pos.x + '%';
+      b.style.top = pos.y + '%';
+    });
+
+    if (!universoOk) {
+      $('linhas').innerHTML = '';
+      estado.linhasAgendadas = false;
+      $('btnUniverso').hidden = true;
+      return;
+    }
+    // As linhas do coração aparecem depois que as estrelas chegam nas posições
+    if (!estado.linhasAgendadas) {
+      estado.linhasAgendadas = true;
+      setTimeout(desenharLinhas, 1700);
+    }
+    $('btnUniverso').hidden = false;
+  }
+
+  // ----- carta -----
+
+  function abrirCarta() {
+    var box = el('div');
+    var foto = document.createElement('img');
+    foto.className = 'carta-foto';
+    foto.src = C.carta.fotoDela;
+    foto.alt = '';
+    foto.onerror = function () { foto.remove(); };
+    box.appendChild(foto);
+    // Um parágrafo corrido, tudo de uma vez
+    C.carta.paragrafos.forEach(function (t) { box.appendChild(el('p', null, t)); });
+    var b = el('button', 'botao', 'Fechar carta');
+    b.addEventListener('click', fecharModal);
+    box.appendChild(b);
+    abrirModal(box, 'carta');
+  }
+
+  function atualizarCarta(snap) {
+    var concluida = conc(snap, 'carta');
+    $('envelope').querySelector('span').textContent = concluida ? 'Reler a carta' : 'Toque para ler';
+    $('envelope').classList.toggle('aberto', concluida);
+    $('btnCartaProx').hidden = !concluida;
+  }
+
+  // ----- baú -----
+
+  var orbitaMontada = false;
+  var vitrinePinada = false;
+
+  function clicarBau() {
+    var snap = H.snapshot();
+    if (conc(snap, 'bau') || estado.abrindoBau) return;
+    if (!snap.bauDisponivel) {
+      mostrarToast('Ainda tá trancado 🔒');
+      return;
+    }
+    estado.cliquesBau++;
+    var bau = $('bau');
+    bau.classList.remove('tremer');
+    void bau.offsetWidth;
+    bau.classList.add('tremer');
+    if (estado.cliquesBau >= C.bau.cliquesParaAbrir) {
+      // Brilha primeiro, depois mostra o baú aberto
+      estado.abrindoBau = true;
+      $('bauPalco').classList.add('brilhando');
+      setTimeout(function () {
+        H.abrirBau();
+        estado.abrindoBau = false;
+      }, 1300);
+    } else {
+      atualizarBau(H.snapshot());
+    }
+  }
+
+  function imgFoto(src) {
+    var img = document.createElement('img');
+    img.className = 'vitrine-foto';
+    img.src = src;
+    img.alt = '';
+    img.onerror = function () { img.remove(); };
+    return img;
+  }
+
+  // Conteúdo que aparece na vitrine, de acordo com a conquista
+  function detalheConquista(id) {
+    var snap = H.snapshot();
+    var box = el('div', 'vitrine-corpo');
+
+    if (id === 'memoria' && snap.fotoFavorita !== null) {
+      var f = C.fotos[snap.fotoFavorita];
+      box.appendChild(imgFoto(f.src));
+      box.appendChild(el('p', null, valido(f.legenda) ? f.legenda : ''));
+      if (valido(f.data)) box.appendChild(el('p', null, f.data));
+    }
+
+    if (id === 'trilha' && snap.musicaFavorita !== null) {
+      var m = C.musicas[snap.musicaFavorita];
+      box.appendChild(imgFoto(m.capa));
+      box.appendChild(el('p', null, m.titulo + ' · ' + m.artista));
+      if (valido(m.spotifyId)) {
+        var fr = document.createElement('iframe');
+        fr.src = 'https://open.spotify.com/embed/track/' + m.spotifyId;
+        fr.height = '152';
+        fr.setAttribute('allow', 'encrypted-media');
+        fr.setAttribute('frameborder', '0');
+        box.appendChild(fr);
+      }
+    }
+
+    if (id === 'conexao') {
+      C.estrelas.filter(function (e) { return e.interativa !== false; }).forEach(function (e) {
+        var p = el('p');
+        p.appendChild(el('strong', null, e.tipo + ': '));
+        p.appendChild(document.createTextNode(e.texto));
+        box.appendChild(p);
+      });
+    }
+
+    if (id === 'coracao') {
+      box.appendChild(imgFoto(C.carta.fotoDela));
+      var trecho = C.carta.paragrafos[0] || '';
+      box.appendChild(el('p', null, trecho.length > 140 ? trecho.slice(0, 137) + '…' : trecho));
+      var bl = el('button', 'botao', 'Ler a carta');
+      bl.addEventListener('click', function () {
+        fecharVitrine();
+        abrirCarta();
+      });
+      box.appendChild(bl);
+    }
+
+    return box;
+  }
+
+  var vitrineAtiva = null;
+  var timerVitrine = null;
+
+  function mostrarVitrine(id) {
+    var c = H.CONQUISTAS.filter(function (x) { return x.id === id; })[0];
+    var v = $('vitrine');
+    v.innerHTML = '';
+    vitrineAtiva = id;
+    v.appendChild(imgBadge(c, 'vitrine-badge'));
+    v.appendChild(el('h2', null, c.nome));
+    v.appendChild(detalheConquista(id));
+    v.hidden = false;
+    $('bauPalco').classList.add('com-vitrine');
+  }
+
+  function fecharVitrine() {
+    clearTimeout(timerVitrine);
+    vitrineAtiva = null;
+    vitrinePinada = false;
+    $('vitrine').hidden = true;
+    $('bauPalco').classList.remove('com-vitrine');
+  }
+
+  // Ao sair da badge (e da vitrine) fecha, com uma pequena folga pra não piscar
+  function agendarEsconder() {
+    if (vitrinePinada) return;
+    clearTimeout(timerVitrine);
+    timerVitrine = setTimeout(function () { if (!vitrinePinada) fecharVitrine(); }, 150);
+  }
+
+  function cancelarEsconder() {
+    clearTimeout(timerVitrine);
+  }
+
+  function montarOrbita() {
+    if (orbitaMontada) return;
+    orbitaMontada = true;
+    var box = $('orbita');
+    // Posições em volta do baú (em %)
+    var pos = [[12, 22], [88, 22], [12, 78], [88, 78]];
+    H.CONQUISTAS.forEach(function (c, i) {
+      var b = el('button', 'badge-orbita');
+      b.setAttribute('data-id', c.id);
+      b.setAttribute('aria-label', c.nome);
+      b.style.left = pos[i][0] + '%';
+      b.style.top = pos[i][1] + '%';
+      b.style.animationDelay = (i * 0.15) + 's';
+      b.appendChild(imgBadge(c));
+      // Passar o mouse mostra; clicar fixa (clicar de novo na mesma badge fecha)
+      b.addEventListener('mouseenter', function () {
+        cancelarEsconder();
+        if (!vitrinePinada) mostrarVitrine(c.id);
+      });
+      b.addEventListener('mouseleave', agendarEsconder);
+      b.addEventListener('click', function (ev) {
+        ev.stopPropagation();
+        if (vitrinePinada && vitrineAtiva === c.id) { fecharVitrine(); return; }
+        vitrinePinada = true;
+        mostrarVitrine(c.id);
+      });
+      box.appendChild(b);
+    });
+    $('vitrine').addEventListener('mouseenter', cancelarEsconder);
+    $('vitrine').addEventListener('mouseleave', agendarEsconder);
+    // Clicar fora da badge e da vitrine fecha
+    document.addEventListener('click', function (ev) {
+      if (!vitrinePinada) return;
+      if (ev.target.closest && (ev.target.closest('.badge-orbita') || ev.target.closest('.vitrine'))) return;
+      fecharVitrine();
+    });
+  }
+
+  function atualizarBau(snap) {
+    var aberto = conc(snap, 'bau');
+    $('bau').classList.toggle('aberto', aberto);
+    $('bauProgresso').hidden = aberto;
+    $('orbita').hidden = !aberto;
+    $('fraseFinal').hidden = !aberto;
+    $('bauPalco').classList.toggle('revelado', aberto);
+    document.documentElement.classList.toggle('bau-escuro', aberto && estado.atual === 'bau');
+    if (aberto) {
+      montarOrbita();
+      $('fraseFinal').textContent = C.fraseFinal;
+    } else {
+      $('vitrine').hidden = true;
+      if (!snap.bauDisponivel) {
+        $('bauProgresso').textContent = '🔒 Complete os capítulos pra abrir';
+      } else {
+        $('bauProgresso').textContent = 'Toque ' + estado.cliquesBau + '/' + C.bau.cliquesParaAbrir;
+      }
+    }
+  }
+
+  // ----- navegação -----
+
+  function aplicarCapitulo() {
+    document.querySelectorAll('.cap').forEach(function (s) {
+      s.classList.toggle('ativo', s.getAttribute('data-cap') === estado.atual);
+    });
+    $('ceu').hidden = estado.atual !== 'universo';
+    document.documentElement.classList.toggle('bau-escuro', estado.atual === 'bau' && conc(H.snapshot(), 'bau'));
+    document.documentElement.classList.toggle('modo-universo', estado.atual === 'universo');
+    if (estado.atual === 'trilha' && estado.musicaAtiva === null) tocar(0, false);
+    document.body.classList.toggle('modo-universo', estado.atual === 'universo');
+    atualizarNav();
+  }
+
+  function irPara(cap) {
+    if (!cap || !H.desbloqueado(cap)) return;
+    estado.atual = cap;
+    aplicarCapitulo();
+  }
+
+  function atualizarNav() {
+    var i = ORDEM.indexOf(estado.atual);
+    var nav = document.querySelector('.nav');
+    // Na tela inicial não tem navegação; Voltar só aparece depois de começar
+    nav.hidden = i <= 0;
+    $('btnAnt').hidden = i <= 0;
+    // Avançar só aparece quando o capítulo atual foi concluído (ex.: foto favorita confirmada)
+    $('btnProx').hidden = i >= ORDEM.length - 1 || !H.desbloqueado(ORDEM[i + 1]);
+  }
+
+  // ----- ligar botões -----
+
+  $('btnIniciar').addEventListener('click', function () {
+    H.resetar();
+    H.iniciar();
+    abrirAjuda(true);
+  });
+
+  $('badge').addEventListener('click', function () { abrirAjuda(false); });
+  $('badge').addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirAjuda(false); }
+  });
+
+
+  $('btnFoto').addEventListener('click', function () { irPara(proximo('momentos')); });
+
+  $('musAnt').addEventListener('click', function () { trocarMusica(-1); });
+  $('musProx').addEventListener('click', function () { trocarMusica(1); });
+  $('btnEscolherMusica').addEventListener('click', function () {
+    if (conc(H.snapshot(), 'trilha')) { irPara(proximo('trilha')); return; }
+    H.escolherMusica(estado.musicaAtiva === null ? 0 : estado.musicaAtiva);
+  });
+
+  $('btnUniverso').addEventListener('click', function () { irPara(proximo('universo')); });
+
+  // Clique: o envelope fechado vira o aberto, e depois o papel com a declaração aparece
+  $('envelope').addEventListener('click', function () {
+    var env = $('envelope');
+    if (env.classList.contains('abrindo')) return;
+    env.classList.add('abrindo', 'aberto');
+    setTimeout(function () {
+      abrirCarta();
+      H.terminarCarta();
+      env.classList.remove('abrindo');
+    }, 900);
+  });
+  $('envelope').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); abrirCarta(); } });
+  $('btnCartaProx').addEventListener('click', function () { irPara(proximo('carta')); });
+
+  $('bau').addEventListener('click', clicarBau);
+  $('bau').addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clicarBau(); } });
+
+  $('btnAnt').addEventListener('click', function () {
+    irPara(ORDEM[ORDEM.indexOf(estado.atual) - 1]);
+  });
+  $('btnProx').addEventListener('click', function () {
+    irPara(proximo(estado.atual));
+  });
+
+  // ----- atualização a partir do estado (app.js) -----
+
+  function atualizar(snap) {
+
+    var ids = snap.conquistas.filter(function (c) { return c.desbloqueada; }).map(function (c) { return c.id; });
+    if (!estado.primeira) {
+      snap.conquistas.forEach(function (c) {
+        if (c.desbloqueada && estado.conquistasAntes.indexOf(c.id) === -1) enfileirarConquista(c);
+      });
+    }
+    estado.conquistasAntes = ids;
+    estado.primeira = false;
+
+    atualizarMomentos(snap);
+    atualizarTrilha(snap);
+    atualizarUniverso(snap);
+    atualizarCarta(snap);
+    atualizarBau(snap);
+    atualizarNav();
+  }
+
+  // ----- imagem própria do baú (opcional) -----
+
+  function carregarImagem(src) {
+    return new Promise(function (ok, erro) {
+      var t = new Image();
+      t.onload = ok;
+      t.onerror = erro;
+      t.src = src;
+    });
+  }
+
+  // Só troca pelo baú de imagem se os dois arquivos existirem; senão continua o baú de CSS
+  Promise.all([carregarImagem('bau-fechado.png'), carregarImagem('bau-aberto.png')])
+    .then(function () { document.body.classList.add('bau-img'); })
+    .catch(function () {});
+
+  // ----- inicialização -----
+
+  montarFotos();
+  montarMusicas();
+  montarEspectro();
+  montarCeu();
+  montarEstrelas();
+
+  // Sempre abre na tela do botão; quem já começou usa "Continuar" pra voltar de onde parou
+  estado.atual = 'inicio';
+  aplicarCapitulo();
+
+  H.ouvir(atualizar);
+})();
+</script>
+
+</body>
+</html>
